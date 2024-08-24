@@ -3,6 +3,7 @@ import { FlashcardDTO } from '../models/flashcard.dto';
 import { AppDataSource } from '../../db/src/data-source';
 import { Profile } from '../../db/src/entity/Profile';
 import { Flashcard } from '../../db/src/entity/Flashcard';
+import { Subjects } from '../../db/src/entity/Subjects';
 
 @Injectable()
 export class FlashcardService {
@@ -47,5 +48,19 @@ export class FlashcardService {
       throw new Error('Flashcard not found');
     }
     return flashcard;
+  }
+
+  async getBySubjectId(id: string) {
+    const subject = await AppDataSource.manager.findOne(Subjects, {
+      where: { uid: id },
+    });
+    if (!subject) {
+      throw new Error('Subject not found');
+    }
+    return await AppDataSource.manager.find(Flashcard, {
+      where: { subject: subject },
+      relations: ['cards', 'subject'],
+      order: { createdAt: 'ASC', cards: { createdAt: 'ASC' } },
+    });
   }
 }

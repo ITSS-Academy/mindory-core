@@ -6,6 +6,7 @@ import {
   HttpStatus,
   Param,
   Post,
+  Query,
   Req,
 } from '@nestjs/common';
 import { FlashcardService } from './flashcard.service';
@@ -26,7 +27,7 @@ export class FlashcardController {
           flashcardDto.flashcard.title,
           flashcardDto.flashcard.description,
           flashcardDto.flashcard.isPublic,
-          flashcardDto.flashcard.subjectId,
+          flashcardDto.flashcard.subject,
         ),
       };
 
@@ -36,7 +37,7 @@ export class FlashcardController {
     }
   }
 
-  @Get()
+  @Get('all')
   async getFlashcard(@Req() req: any) {
     try {
       let authData = req.user as DecodedIdToken;
@@ -46,13 +47,21 @@ export class FlashcardController {
     }
   }
 
-  @Get(':id')
-  async getFlashcardById(@Req() req: any, @Param('id') id: string) {
+  @Get('/subject')
+  async getFlashcardBySubjectId(@Req() req: any, @Query('id') id: string) {
     try {
-      let authData = req.user as DecodedIdToken;
+      return await this.flashcardService.getBySubjectId(id);
+    } catch (error) {
+      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  @Get()
+  async getFlashcardById(@Req() req: any, @Query('id') id: any) {
+    try {
       return await this.flashcardService.getById(id);
     } catch (error) {
-      return new HttpException(error.message, HttpStatus.BAD_REQUEST);
+      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }
   }
 }

@@ -13,6 +13,6 @@ export class Subjects {
   @Column()
   name: string;
 
-  @OneToMany(() => Flashcard, (flashcard) => flashcard.subjectId)
+  @OneToMany(() => Flashcard, (flashcard) => flashcard.subject)
   flashcards: Flashcard[];
 }

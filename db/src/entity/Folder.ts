@@ -4,9 +4,11 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Profile } from './Profile';
+import { Flashcard } from './Flashcard';
 
 @Entity()
 export class Folder {
@@ -29,4 +31,7 @@ export class Folder {
     { name: 'authorEmail', referencedColumnName: 'email' },
   ])
   authorId: Profile;
+
+  @OneToMany(() => Flashcard, (flashcard) => flashcard.folder)
+  flashcards: Flashcard[];
 }

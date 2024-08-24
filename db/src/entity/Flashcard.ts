@@ -10,6 +10,7 @@ import {
 import { Profile } from './Profile';
 import { Card } from './Card';
 import { Subjects } from './Subjects';
+import { Folder } from './Folder';
 
 @Entity()
 export class Flashcard {
@@ -17,12 +18,16 @@ export class Flashcard {
     title: string,
     description: string,
     isPublic: boolean,
-    subjectId: string,
+    subject: Subjects,
+    folder?: Folder,
   ) {
     this.title = title;
     this.description = description;
     this.isPublic = isPublic;
-    this.subjectId = subjectId;
+    this.subject = subject;
+    if (folder) {
+      this.folder = folder;
+    }
   }
 
   @PrimaryGeneratedColumn('uuid')
@@ -47,10 +52,14 @@ export class Flashcard {
   ])
   authorId: Profile;
 
-  @OneToMany(() => Card, (card) => card.flashcardId)
+  @OneToMany(() => Card, (card) => card.flashcard)
   cards: Card[];
 
   @ManyToOne(() => Subjects, (subject) => subject.uid)
   @JoinColumn({ name: 'subjectId' })
-  subjectId: string;
+  subject: Subjects;
+
+  @ManyToOne(() => Folder, (folder) => folder.id, { nullable: true })
+  @JoinColumn({ name: 'folderId' })
+  folder: Folder;
 }

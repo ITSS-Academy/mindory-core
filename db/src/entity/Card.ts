@@ -10,10 +10,10 @@ import { Flashcard } from './Flashcard';
 
 @Entity()
 export class Card {
-  constructor(term: string, definition: string, flashcardId: string) {
+  constructor(term: string, definition: string, flashcard: string) {
     this.term = term;
     this.definition = definition;
-    this.flashcardId = flashcardId;
+    this.flashcard = flashcard;
   }
 
   @PrimaryGeneratedColumn('uuid')
@@ -30,5 +30,5 @@ export class Card {
 
   @ManyToOne(() => Flashcard, (flashcard) => flashcard.id)
   @JoinColumn({ name: 'flashcardId' })
-  flashcardId: string;
+  flashcard: string;
 }

@@ -18,7 +18,7 @@ export class CardController {
     try {
       let card: { card: Card }[] = cardDto.card.map((card: any) => {
         return {
-          card: new Card(card.term, card.definition, card.flashcardId),
+          card: new Card(card.term, card.definition, card.flashcard),
         };
       });
       await this.cardService.create(card);

@@ -41,7 +41,7 @@ export class FlashcardService {
   async getById(id: string) {
     let flashcard = await AppDataSource.manager.findOne(Flashcard, {
       where: { id: id },
-      relations: ['cards'],
+      relations: ['cards', 'subject'],
       order: { createdAt: 'ASC', cards: { createdAt: 'ASC' } },
     });
     if (!flashcard) {

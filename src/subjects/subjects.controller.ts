@@ -10,7 +10,7 @@ import { SubjectsService } from './subjects.service';
 import { SubjectsDTO } from '../models/subjects.dto';
 import { Subjects } from '../../db/src/entity/Subjects';
 
-@Controller('subjects')
+@Controller('subject')
 export class SubjectsController {
   constructor(private subjectsService: SubjectsService) {}
 
@@ -18,11 +18,11 @@ export class SubjectsController {
   async createSubject(@Body() subjectDto: SubjectsDTO) {
     try {
       let subject: SubjectsDTO = {
-        subjects: new Subjects(subjectDto.subjects.name),
+        subject: new Subjects(subjectDto.subject.name),
       };
       await this.subjectsService.create(subject);
     } catch (error) {
-      return new HttpException(error.message, HttpStatus.BAD_REQUEST);
+      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }
   }
 

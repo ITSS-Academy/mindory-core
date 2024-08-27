@@ -6,6 +6,7 @@ import {
   HttpStatus,
   Param,
   Post,
+  Put,
   Query,
   Req,
 } from '@nestjs/common';
@@ -28,12 +29,13 @@ export class FlashcardController {
           flashcardDto.flashcard.description,
           flashcardDto.flashcard.isPublic,
           flashcardDto.flashcard.subject,
+          flashcardDto.flashcard.cards,
         ),
       };
 
       await this.flashcardService.create(flashcard, authData.uid);
     } catch (error) {
-      return new HttpException(error.message, HttpStatus.BAD_REQUEST);
+      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }
   }
 
@@ -60,6 +62,26 @@ export class FlashcardController {
   async getFlashcardById(@Req() req: any, @Query('id') id: any) {
     try {
       return await this.flashcardService.getById(id);
+    } catch (error) {
+      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  @Put()
+  async updateFlashcard(@Req() req: any, @Body() flashcardDto: FlashcardDTO) {
+    try {
+      let authData = req.user as DecodedIdToken;
+      let flashcard: FlashcardDTO = {
+        flashcard: new Flashcard(
+          flashcardDto.flashcard.title,
+          flashcardDto.flashcard.description,
+          flashcardDto.flashcard.isPublic,
+          flashcardDto.flashcard.subject,
+          flashcardDto.flashcard.cards,
+        ),
+      };
+
+      await this.flashcardService.update(flashcard);
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }

@@ -19,15 +19,13 @@ export class Flashcard {
     description: string,
     isPublic: boolean,
     subject: Subjects,
-    folder?: Folder,
+    cards: Card[],
   ) {
     this.title = title;
     this.description = description;
     this.isPublic = isPublic;
     this.subject = subject;
-    if (folder) {
-      this.folder = folder;
-    }
+    this.cards = cards;
   }
 
   @PrimaryGeneratedColumn('uuid')
@@ -52,7 +50,10 @@ export class Flashcard {
   ])
   authorId: Profile;
 
-  @OneToMany(() => Card, (card) => card.flashcard)
+  @OneToMany(() => Card, (card) => card.flashcard, {
+    cascade: true,
+    onDelete: 'CASCADE',
+  })
   cards: Card[];
 
   @ManyToOne(() => Subjects, (subject) => subject.uid)

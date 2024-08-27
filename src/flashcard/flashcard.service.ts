@@ -4,6 +4,7 @@ import { AppDataSource } from '../../db/src/data-source';
 import { Profile } from '../../db/src/entity/Profile';
 import { Flashcard } from '../../db/src/entity/Flashcard';
 import { Subjects } from '../../db/src/entity/Subjects';
+import { Card } from '../../db/src/entity/Card';
 
 @Injectable()
 export class FlashcardService {
@@ -14,8 +15,21 @@ export class FlashcardService {
     if (!author) {
       throw new Error('Author not found');
     }
-    flashcard.flashcard.authorId = author;
-    await AppDataSource.manager.save(flashcard.flashcard);
+
+    const newFlashcard = await AppDataSource.manager.save(Flashcard, {
+      ...flashcard.flashcard,
+      authorId: author,
+      cards: [],
+    });
+
+    const cards = flashcard.flashcard.cards.map(async (card) => {
+      return await AppDataSource.manager.save(Card, {
+        ...card,
+        flashcard: newFlashcard,
+      });
+    });
+
+    await Promise.all(cards);
   }
 
   async getByAuthorId(id: string) {
@@ -59,8 +73,33 @@ export class FlashcardService {
     }
     return await AppDataSource.manager.find(Flashcard, {
       where: { subject: subject },
-      relations: ['cards', 'subject'],
+      relations: ['cards'],
       order: { createdAt: 'ASC', cards: { createdAt: 'ASC' } },
     });
+  }
+
+  async update(flashcard: FlashcardDTO) {
+    let flashcardToUpdate = await AppDataSource.manager.findOne(Flashcard, {
+      where: { id: flashcard.flashcard.id },
+    });
+    if (!flashcardToUpdate) {
+      throw new Error('Flashcard not found');
+    }
+
+    await AppDataSource.manager.update(Flashcard, flashcard.flashcard.id, {
+      title: flashcard.flashcard.title,
+      description: flashcard.flashcard.description,
+      isPublic: flashcard.flashcard.isPublic,
+      subject: flashcard.flashcard.subject,
+    });
+
+    const cards = flashcard.flashcard.cards.map(async (card) => {
+      return await AppDataSource.manager.save(Card, {
+        ...card,
+        flashcard: flashcardToUpdate,
+      });
+    });
+
+    await Promise.all(cards);
   }
 }

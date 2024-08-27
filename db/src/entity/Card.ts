@@ -10,7 +10,7 @@ import { Flashcard } from './Flashcard';
 
 @Entity()
 export class Card {
-  constructor(term: string, definition: string, flashcard: string) {
+  constructor(term: string, definition: string, flashcard: Flashcard) {
     this.term = term;
     this.definition = definition;
     this.flashcard = flashcard;
@@ -28,7 +28,9 @@ export class Card {
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;
 
-  @ManyToOne(() => Flashcard, (flashcard) => flashcard.id)
+  @ManyToOne(() => Flashcard, (flashcard) => flashcard.id, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'flashcardId' })
-  flashcard: string;
+  flashcard: Flashcard;
 }

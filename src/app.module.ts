@@ -32,6 +32,7 @@ export class AppModule implements NestModule {
       .apply(AuthMiddleware)
       .exclude(
         { path: 'subject', method: RequestMethod.ALL },
+        { path: 'subject/:id', method: RequestMethod.ALL },
         { path: 'flashcard/subject', method: RequestMethod.GET },
       )
       .forRoutes('*');

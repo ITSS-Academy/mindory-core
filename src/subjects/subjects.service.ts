@@ -15,14 +15,20 @@ export class SubjectsService {
     await AppDataSource.manager.save(subject.subject);
   }
 
-  async getSubjectById(id: string) {
-    return await AppDataSource.manager.find(Subjects, {
-      where: { uid: id },
-      relations: ['quizzes'],
-    });
-  }
-
   async getAllSubjects() {
-    return await AppDataSource.manager.find(Subjects);
+    const subjects = await AppDataSource.manager.find(Subjects, {
+      relations: ['flashcards', 'flashcards.cards', 'flashcards.authorId'],
+    });
+
+    return subjects.map((subject) => {
+      const flashcardsWithCardCount = subject.flashcards.map((flashcard) => ({
+        ...flashcard,
+        totalCards: flashcard.cards.length,
+      }));
+      return {
+        ...subject,
+        flashcards: flashcardsWithCardCount,
+      };
+    });
   }
 }

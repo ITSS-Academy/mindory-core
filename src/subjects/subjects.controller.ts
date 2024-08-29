@@ -34,13 +34,4 @@ export class SubjectsController {
       return new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }
   }
-
-  @Get(':id')
-  async getSubjectById(id: string) {
-    try {
-      return await this.subjectsService.getSubjectById(id);
-    } catch (error) {
-      return new HttpException(error.message, HttpStatus.BAD_REQUEST);
-    }
-  }
 }
